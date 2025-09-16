@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from . import quizzes_bp
 from ..extensions import db
 from ..models import Quiz, Question, Choice, Submission, Answer, AnswerChoice
-from .forms import QuizTitleForm
+from .forms import QuizTitleForm, QuestionForm, ChoiceForm, SearchForm
 from .services import gen_code
 
 
@@ -21,6 +21,7 @@ def new_quiz():
         qz = Quiz(owner_id=current_user.id, title=form.title.data, code=gen_code())
         db.session.add(qz)
         db.session.commit()
+        flash("Тест успішно створено! Тепер додайте питання.", "success")
         return redirect(url_for("quizzes.edit_quiz", quiz_id=qz.id))
     return render_template("quizzes/new.html", form=form)
 
@@ -40,15 +41,21 @@ def edit_quiz(quiz_id):
                 q = Question(quiz_id=qz.id, title=title, qtype=qtype)
                 db.session.add(q)
                 db.session.commit()
+                flash("Питання додано!", "success")
         elif action == "delete_question":
             qid = int(request.form.get("qid"))
             q = db.session.get(Question, qid)
             if q and q.quiz_id == qz.id:
                 db.session.delete(q)
                 db.session.commit()
+                flash("Питання видалено!", "info")
         elif action == "toggle_publish":
             qz.is_published = not qz.is_published
             db.session.commit()
+            if qz.is_published:
+                flash("Тест опубліковано! Код: " + qz.code, "success")
+            else:
+                flash("Тест знято з публікації", "info")
         elif action == "add_choice":
             qid = int(request.form.get("qid"))
             text = request.form.get("choice_text")
@@ -56,6 +63,7 @@ def edit_quiz(quiz_id):
                 ch = Choice(question_id=qid, text=text)
                 db.session.add(ch)
                 db.session.commit()
+                flash("Варіант відповіді додано!", "success")
         elif action == "set_correct":
             cid = int(request.form.get("cid"))
             ch = db.session.get(Choice, cid)
@@ -66,12 +74,14 @@ def edit_quiz(quiz_id):
                 else:
                     ch.is_correct = not ch.is_correct
                 db.session.commit()
+                flash("Правильність відповіді оновлено!", "success")
         elif action == "delete_choice":
             cid = int(request.form.get("cid"))
             ch = db.session.get(Choice, cid)
             if ch and ch.question.quiz_id == qz.id:
                 db.session.delete(ch)
                 db.session.commit()
+                flash("Варіант відповіді видалено!", "info")
         return redirect(url_for("quizzes.edit_quiz", quiz_id=qz.id))
 
     return render_template("quizzes/edit.html", quiz=qz)
@@ -89,14 +99,15 @@ def my_quizzes():
 @quizzes_bp.route("/find", methods=["GET", "POST"])
 @login_required
 def find_quiz():
-    if request.method == "POST":
-        code = request.form.get("code", "").strip().upper()
+    form = SearchForm()
+    if form.validate_on_submit():
+        code = form.code.data.upper()
         qz = db.session.execute(db.select(Quiz).filter_by(code=code, is_published=True)).scalar_one_or_none()
         if not qz:
-            flash("Тест не найден или не опубликован")
+            flash("Тест не знайдено або не опубліковано", "error")
         else:
             return redirect(url_for("quizzes.take_quiz", code=code))
-    return render_template("quizzes/find.html")
+    return render_template("quizzes/find.html", form=form)
 
 
 @quizzes_bp.route("/take/<code>", methods=["GET", "POST"])
@@ -126,6 +137,7 @@ def take_quiz(code):
         sub.score = score
         sub.total = total
         db.session.commit()
+        flash(f"Тест завершено! Ваш результат: {score}/{total} ({'%.1f' % ((score/total)*100) if total > 0 else 0}%)", "success")
         return redirect(url_for("quizzes.results", quiz_id=qz.id))
 
     return render_template("quizzes/take.html", quiz=qz)

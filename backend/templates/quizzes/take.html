@@ -1,23 +1,45 @@
 {% extends "base.html" %}
-{% block title %}Прохождение теста{% endblock %}
+{% block title %}Проходження тесту - {{ quiz.title }}{% endblock %}
 {% block content %}
-<h2>{{ quiz.title }}</h2>
-<form method="post">
-{% for q in quiz.questions %}
-    <p><strong>{{ loop.index }}. {{ q.title }}</strong></p>
-    {% if q.qtype in ["single", "multi"] %}
-        {% for choice in q.choices %}
-            <label>
-                <input type="{% if q.qtype == 'single' %}radio{% else %}checkbox{% endif %}"
-                       name="q_{{ q.id }}"
-                       value="{{ choice.id }}">
-                {{ choice.text }}
-            </label><br>
+<div class="quiz-container">
+    <h2>{{ quiz.title }}</h2>
+    <p class="text-center" style="color: #666; margin-bottom: 2rem;">
+        Всього питань: {{ quiz.questions|length }}
+    </p>
+    
+    <form method="post">
+        {% for question in quiz.questions %}
+            <div class="question-container">
+                <h3>{{ loop.index }}. {{ question.title }}</h3>
+                
+                {% if question.qtype in ['single', 'multi'] %}
+                    <div class="answer-options">
+                        {% for choice in question.choices %}
+                            <div class="answer-option">
+                                <input type="{% if question.qtype == 'single' %}radio{% else %}checkbox{% endif %}"
+                                       name="q_{{ question.id }}"
+                                       value="{{ choice.id }}"
+                                       id="q{{ question.id }}_c{{ choice.id }}">
+                                <label for="q{{ question.id }}_c{{ choice.id }}">{{ choice.text }}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="form-group">
+                        <textarea name="q_{{ question.id }}" 
+                                  class="form-control" 
+                                  rows="4" 
+                                  placeholder="Введіть вашу відповідь..."></textarea>
+                    </div>
+                {% endif %}
+            </div>
         {% endfor %}
-    {% else %}
-        <textarea name="q_{{ q.id }}"></textarea>
-    {% endif %}
-{% endfor %}
-    <button type="submit">Отправить</button>
-</form>
+        
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-success" style="font-size: 1.2rem; padding: 15px 30px;">
+                Завершити тест
+            </button>
+        </div>
+    </form>
+</div>
 {% endblock %}

@@ -1,28 +1,30 @@
 {% extends "base.html" %}
-
-{% block title %}Привязка Telegram{% endblock %}
-
+{% block title %}Прив'язка Telegram - TestingApp{% endblock %}
 {% block content %}
 <div class="card">
-    <h2>Привязка Telegram-аккаунта</h2>
+    <h2>📱 Прив'язка Telegram-акаунту</h2>
     <p>
-        Чтобы привязать аккаунт к Telegram, сначала <b>запустите бота</b> и нажмите кнопку <b>«Поделиться номером»</b>.
-        После этого мы сможем отправить вам код для подтверждения.
+        Щоб прив'язати акаунт до Telegram, спочатку <b>запустіть бота</b> та натисніть кнопку <b>«Поділитися номером»</b>.
+        Після цього ми зможемо надіслати вам код для підтвердження.
     </p>
 
     <form method="post" action="{{ url_for('auth.telegram_send_code') }}">
-        <label for="phone">Ваш номер телефона (в формате +380...):</label>
-        <input type="text" id="phone" name="phone" value="{{ phone or '' }}" placeholder="+380123456789" required>
-        <button type="submit" class="btn">Получить код</button>
+        <div class="form-group">
+            <label for="phone">Ваш номер телефону (у форматі +380...):</label>
+            <input type="text" id="phone" name="phone" class="form-control" value="{{ phone or '' }}" placeholder="+380123456789" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Отримати код</button>
     </form>
 
     {% if wait_code %}
     <hr>
     <form method="post" action="{{ url_for('auth.telegram_verify') }}">
-        <label for="code">Введите код из Telegram:</label>
-        <input type="text" id="code" name="code" placeholder="123456" required>
-        <input type="hidden" name="phone" value="{{ phone }}">
-        <button type="submit" class="btn btn-success">Подтвердить</button>
+        <div class="form-group">
+            <label for="code">Введіть код з Telegram:</label>
+            <input type="text" id="code" name="code" class="form-control" placeholder="123456" required>
+            <input type="hidden" name="phone" value="{{ phone }}">
+        </div>
+        <button type="submit" class="btn btn-success">Підтвердити</button>
     </form>
     {% endif %}
 </div>

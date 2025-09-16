@@ -1,30 +1,108 @@
 {% extends "base.html" %}
-{% block title %}Редактирование теста{% endblock %}
+{% block title %}Редагування тесту - {{ quiz.title }}{% endblock %}
 {% block content %}
-<h2>Редактирование теста: {{ quiz.title }}</h2>
+<div class="quiz-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>📝 {{ quiz.title }}</h2>
+        <div class="d-flex gap-2">
+            <form method="post" style="display: inline;">
+                <input type="hidden" name="action" value="toggle_publish">
+                <button type="submit" class="btn {% if quiz.is_published %}btn-danger{% else %}btn-success{% endif %}">
+                    {% if quiz.is_published %}📤 Зняти з публікації{% else %}📤 Опублікувати{% endif %}
+                </button>
+            </form>
+        </div>
+    </div>
 
-<form method="post">
-    <input type="hidden" name="action" value="toggle_publish">
-    <button type="submit">
-        {% if quiz.is_published %}Снять с публикации{% else %}Опубликовать{% endif %}
-    </button>
-</form>
+    {% if quiz.is_published %}
+        <div class="info-message">
+            <strong>Код тесту:</strong> <span class="quiz-code">{{ quiz.code }}</span>
+            <br>Поделіться цим кодом з учасниками, щоб вони могли пройти тест.
+        </div>
+    {% endif %}
 
-<h3>Вопросы</h3>
-<ul>
-{% for q in quiz.questions %}
-    <li>{{ q.title }} ({{ q.qtype }})</li>
-{% endfor %}
-</ul>
+    <div class="mt-3">
+        <h3>📋 Питання ({{ quiz.questions|length }})</h3>
+        
+        {% if quiz.questions %}
+            <div class="quiz-list">
+                {% for question in quiz.questions %}
+                    <div class="question-item">
+                        <div class="question-header">
+                            <h4 class="question-title">{{ loop.index }}. {{ question.title }}</h4>
+                            <div class="d-flex gap-2">
+                                <span class="question-type">
+                                    {% if question.qtype == 'single' %}Один правильний{% elif question.qtype == 'multi' %}Кілька правильних{% else %}Відкрите{% endif %}
+                                </span>
+                                <form method="post" style="display: inline;">
+                                    <input type="hidden" name="action" value="delete_question">
+                                    <input type="hidden" name="qid" value="{{ question.id }}">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Ви впевнені, що хочете видалити це питання?')">🗑️</button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        {% if question.qtype in ['single', 'multi'] %}
+                            <div class="choices-list">
+                                {% for choice in question.choices %}
+                                    <div class="choice-item {% if choice.is_correct %}correct{% endif %}">
+                                        <input type="{% if question.qtype == 'single' %}radio{% else %}checkbox{% endif %}" 
+                                               {% if choice.is_correct %}checked{% endif %} disabled>
+                                        <span class="choice-text">{{ choice.text }}</span>
+                                        <div class="choice-actions">
+                                            <form method="post" style="display: inline;">
+                                                <input type="hidden" name="action" value="set_correct">
+                                                <input type="hidden" name="cid" value="{{ choice.id }}">
+                                                <button type="submit" class="btn btn-sm {% if choice.is_correct %}btn-success{% else %}btn-primary{% endif %}">
+                                                    {% if choice.is_correct %}✓{% else %}○{% endif %}
+                                                </button>
+                                            </form>
+                                            <form method="post" style="display: inline;">
+                                                <input type="hidden" name="action" value="delete_choice">
+                                                <input type="hidden" name="cid" value="{{ choice.id }}">
+                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Видалити варіант?')">🗑️</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                
+                                <form method="post" class="mt-2">
+                                    <input type="hidden" name="action" value="add_choice">
+                                    <input type="hidden" name="qid" value="{{ question.id }}">
+                                    <div class="d-flex gap-2">
+                                        <input type="text" name="choice_text" class="form-control" placeholder="Новий варіант відповіді..." required>
+                                        <button type="submit" class="btn btn-success">+</button>
+                                    </div>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3>Питання відсутні</h3>
+                <p>Додайте перше питання до вашого тесту</p>
+            </div>
+        {% endif %}
 
-<form method="post">
-    <input type="hidden" name="action" value="add_question">
-    <input type="text" name="q_title" placeholder="Текст вопроса">
-    <select name="q_type">
-        <option value="single">С 1 ответом</option>
-        <option value="multi">С несколькими ответами</option>
-        <option value="open">Открытый</option>
-    </select>
-    <button type="submit">Добавить</button>
-</form>
+        <div class="question-form">
+            <h4>➕ Додати питання</h4>
+            <form method="post">
+                <input type="hidden" name="action" value="add_question">
+                <div class="form-group">
+                    <input type="text" name="q_title" class="form-control" placeholder="Текст питання..." required>
+                </div>
+                <div class="form-group">
+                    <select name="q_type" class="form-control" required>
+                        <option value="single">Один правильний відповідь</option>
+                        <option value="multi">Кілька правильних відповідей</option>
+                        <option value="open">Відкрите питання</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Додати питання</button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}

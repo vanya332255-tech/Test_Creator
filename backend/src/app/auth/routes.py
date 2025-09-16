@@ -44,7 +44,7 @@ def telegram_login():
 def telegram_send_code():
     phone = request.form.get("phone", "").strip()
     if not phone:
-        flash("Введите номер телефона")
+        flash("Введіть номер телефону", "error")
         return redirect(url_for("auth.telegram_login"))
 
     code = codes.issue_code(phone)
@@ -53,10 +53,10 @@ def telegram_send_code():
     import asyncio
     ok = asyncio.run(send_code(phone, code))
     if not ok:
-        flash("Сначала запустите бота и поделитесь номером, чтобы мы могли отправить код.")
+        flash("Спочатку запустіть бота та поділіться номером, щоб ми могли надіслати код.", "error")
         return redirect(url_for("auth.telegram_login"))
 
-    flash("Код отправлен в Telegram. Введите его ниже.")
+    flash("Код надіслано в Telegram. Введіть його нижче.", "success")
     return render_template("auth/link_telegram.html", phone=phone, wait_code=True)
 
 
@@ -66,7 +66,7 @@ def telegram_verify():
     code = request.form.get("code", "").strip()
 
     if not codes.verify(phone, code):
-        flash("Неверный или просроченный код")
+        flash("Невірний або прострочений код", "error")
         return redirect(url_for("auth.telegram_login"))
 
     # Находим или создаём пользователя
@@ -78,6 +78,9 @@ def telegram_verify():
         user = User(phone=phone, auth_provider="telegram")
         db.session.add(user)
         db.session.commit()
+        flash("Акаунт успішно створено!", "success")
+    else:
+        flash("Вітаємо! Ви успішно увійшли в систему.", "success")
 
     login_user(user)
     return redirect(url_for("quizzes.dashboard"))
