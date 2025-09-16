@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Реєстрація - TestingApp{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 2rem auto;">
+    <h2 class="text-center">📝 Реєстрація</h2>
+    <p class="text-center" style="color: #666; margin-bottom: 2rem;">
+        Створіть новий акаунт для створення та проходження тестів
+    </p>
+    
+    <form method="post">
+        {{ form.hidden_tag() }}
+        
+        <div class="form-group">
+            {{ form.username.label(class="form-group label") }}
+            {{ form.username(class="form-control", placeholder="Username") }}
+            {% if form.username.errors %}
+                <div class="error-message">
+                    {% for error in form.username.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.email.label(class="form-group label") }}
+            {{ form.email(class="form-control", placeholder="Email") }}
+            {% if form.email.errors %}
+                <div class="error-message">
+                    {% for error in form.email.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="d-flex gap-2">
+            <div class="form-group" style="flex: 1;">
+                {{ form.first_name.label(class="form-group label") }}
+                {{ form.first_name(class="form-control", placeholder="Ім'я") }}
+                {% if form.first_name.errors %}
+                    <div class="error-message">
+                        {% for error in form.first_name.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-group" style="flex: 1;">
+                {{ form.last_name.label(class="form-group label") }}
+                {{ form.last_name(class="form-control", placeholder="Прізвище") }}
+                {% if form.last_name.errors %}
+                    <div class="error-message">
+                        {% for error in form.last_name.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            {{ form.password.label(class="form-group label") }}
+            {{ form.password(class="form-control", placeholder="Пароль") }}
+            {% if form.password.errors %}
+                <div class="error-message">
+                    {% for error in form.password.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            {{ form.password2.label(class="form-group label") }}
+            {{ form.password2(class="form-control", placeholder="Підтвердіть пароль") }}
+            {% if form.password2.errors %}
+                <div class="error-message">
+                    {% for error in form.password2.errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+        
+        <div class="text-center">
+            {{ form.submit(class="btn btn-primary", style="width: 100%;") }}
+        </div>
+    </form>
+    
+    <div class="text-center mt-3">
+        <p style="color: #666; font-size: 0.9rem;">
+            Вже маєте акаунт? 
+            <a href="{{ url_for('auth.login') }}" style="color: #667eea; text-decoration: none;">
+                Увійти
+            </a>
+        </p>
+    </div>
+    
+    <hr style="margin: 2rem 0;">
+    
+    <!-- Альтернативні способи реєстрації -->
+    <div class="text-center">
+        <p style="color: #666; margin-bottom: 1rem;">Або зареєструйтеся через:</p>
+        <div class="btn-group">
+            <a href="{{ url_for('auth.google_login') }}" class="btn btn-google">
+                🔗 Google
+            </a>
+            <a href="{{ url_for('auth.telegram_login') }}" class="btn btn-telegram">
+                📱 Telegram
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

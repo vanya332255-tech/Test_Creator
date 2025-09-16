@@ -10,7 +10,7 @@ from .services import gen_code
 @quizzes_bp.route("/dashboard")
 @login_required
 def dashboard():
-    return render_template("dashboard.html")
+    return render_template("quizzes/dashboard.html")
 
 
 @quizzes_bp.route("/new", methods=["GET", "POST"])

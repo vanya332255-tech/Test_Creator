@@ -11,14 +11,27 @@ created_at = db.Column(db.DateTime, default=datetime.utcnow)
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, index=True)
+    username = db.Column(db.String(80), unique=True, index=True)  # Додаємо username
+    password_hash = db.Column(db.String(255))  # Додаємо password hash
     phone = db.Column(db.String(32), unique=True)
     first_name = db.Column(db.String(120))
     last_name = db.Column(db.String(120))
-    auth_provider = db.Column(db.String(20))  # 'google' | 'telegram'
+    auth_provider = db.Column(db.String(20))  # 'google' | 'telegram' | 'admin' | 'local'
     google_sub = db.Column(db.String(255), unique=True)
     telegram_user_id = db.Column(db.String(64), unique=True)
     is_active = db.Column(db.Boolean, default=True)
+    is_admin = db.Column(db.Boolean, default=False)  # Суперюзер
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    def set_password(self, password):
+        """Встановити пароль (хешувати)"""
+        from werkzeug.security import generate_password_hash
+        self.password_hash = generate_password_hash(password)
+    
+    def check_password(self, password):
+        """Перевірити пароль"""
+        from werkzeug.security import check_password_hash
+        return check_password_hash(self.password_hash, password)
 
 
 class Quiz(db.Model):
