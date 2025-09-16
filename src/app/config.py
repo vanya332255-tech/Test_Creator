@@ -15,3 +15,8 @@ class Config:
     APP_BASE_URL = os.getenv("APP_BASE_URL", "http://localhost:5000")
     GOOGLE_FORM_ID = os.getenv("GOOGLE_FORM_ID", "YOUR_GOOGLE_FORM_ID")
     GOOGLE_FORM_URL = os.getenv("GOOGLE_FORM_URL", "https://forms.gle/YOUR_GOOGLE_FORM_ID")
+
+
+class ProductionConfig(Config):
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///quiz.db")
+    APP_BASE_URL = os.getenv("APP_BASE_URL", "https://your-app-name.onrender.com")
