@@ -19,4 +19,4 @@ class Config:
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", "sqlite:///quiz.db")
-    APP_BASE_URL = os.getenv("APP_BASE_URL", "https://your-app-name.onrender.com")
+    APP_BASE_URL = os.getenv("APP_BASE_URL", "https://testingapp.onrender.com")
