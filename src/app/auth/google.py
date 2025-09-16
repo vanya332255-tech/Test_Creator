@@ -1,3 +1,4 @@
+import os
 from flask import current_app, url_for, redirect, request
 from authlib.integrations.flask_client import OAuth
 
@@ -16,7 +17,7 @@ def init_google(app):
 
 
 def login_google():
-    redirect_uri = url_for('auth.google_callback', _external=True)
+    redirect_uri = os.getenv("GOOGLE_REDIRECT_URI")
     return oauth.google.authorize_redirect(redirect_uri)
 
 
