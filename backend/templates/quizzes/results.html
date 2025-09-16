@@ -1,16 +1,58 @@
 {% extends "base.html" %}
-{% block title %}Результаты{% endblock %}
+{% block title %}Результати - {{ quiz.title }}{% endblock %}
 {% block content %}
-<h2>Результаты по тесту: {{ quiz.title }}</h2>
-<table border="1" cellpadding="5">
-    <tr><th>Пользователь</th><th>Баллы</th></tr>
-    {% for sub in subs %}
-        <tr>
-            <td>{{ sub.user_id }}</td>
-            <td>{{ sub.score }}/{{ sub.total }}</td>
-        </tr>
+<div class="results-container">
+    <h2>📊 Результати тесту: {{ quiz.title }}</h2>
+    
+    {% if subs %}
+        <div class="score-display">
+            <h3>Всього проходжень: {{ subs|length }}</h3>
+        </div>
+        
+        <table class="results-table">
+            <thead>
+                <tr>
+                    <th>Користувач</th>
+                    <th>Дата проходження</th>
+                    <th>Результат</th>
+                    <th>Відсоток</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sub in subs %}
+                    <tr>
+                        <td>
+                            {% if sub.user_id %}
+                                Користувач #{{ sub.user_id }}
+                            {% else %}
+                                Анонімний користувач
+                            {% endif %}
+                        </td>
+                        <td>{{ sub.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                        <td>
+                            <strong>{{ sub.score }}/{{ sub.total }}</strong>
+                        </td>
+                        <td>
+                            {% if sub.total > 0 %}
+                                {{ "%.1f"|format((sub.score / sub.total) * 100) }}%
+                            {% else %}
+                                0%
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
-        <tr><td colspan="2">Пока никто не прошёл</td></tr>
-    {% endfor %}
-</table>
+        <div class="empty-state">
+            <h3>Поки немає результатів</h3>
+            <p>Коли хтось пройде ваш тест, результати з'являться тут</p>
+        </div>
+    {% endif %}
+    
+    <div class="text-center mt-3">
+        <a href="{{ url_for('quizzes.edit_quiz', quiz_id=quiz.id) }}" class="btn btn-primary">Редагувати тест</a>
+        <a href="{{ url_for('quizzes.my_quizzes') }}" class="btn btn-success">Мої тести</a>
+    </div>
+</div>
 {% endblock %}

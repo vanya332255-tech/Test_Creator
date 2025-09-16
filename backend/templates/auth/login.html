@@ -1,12 +1,25 @@
 {% extends "base.html" %}
-{% block title %}Вход{% endblock %}
-
+{% block title %}Вхід - TestingApp{% endblock %}
 {% block content %}
-<div class="card centered">
-    <h2>Вход</h2>
+<div class="card" style="max-width: 400px; margin: 2rem auto;">
+    <h2 class="text-center">🔐 Вхід в систему</h2>
+    <p class="text-center" style="color: #666; margin-bottom: 2rem;">
+        Оберіть спосіб входу
+    </p>
+    
     <div class="btn-group">
-        <a href="{{ url_for('auth.google_login') }}" class="btn btn-google">Войти через Google</a>
-        <a href="{{ url_for('auth.telegram_login') }}" class="btn btn-telegram">Войти через Telegram</a>
+        <a href="{{ url_for('auth.google_login') }}" class="btn btn-google">
+            🔗 Увійти через Google
+        </a>
+        <a href="{{ url_for('auth.telegram_login') }}" class="btn btn-telegram">
+            📱 Увійти через Telegram
+        </a>
+    </div>
+    
+    <div class="mt-3 text-center">
+        <p style="font-size: 0.9rem; color: #666;">
+            Після входу ви зможете створювати та проходити тести
+        </p>
     </div>
 </div>
 {% endblock %}

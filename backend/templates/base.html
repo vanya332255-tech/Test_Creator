@@ -1,25 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}TestingApp{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}TestingApp - Створюй та проходь тести{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-<header>
-    <nav>
-        <a href="{{ url_for('index') }}">Главная</a>
-        {% if current_user.is_authenticated %}
-            <a href="{{ url_for('quizzes.dashboard') }}">Личный кабинет</a>
-            <a href="{{ url_for('auth.logout') }}">Выйти ({{ current_user.id }})</a>
-        {% else %}
-            <a href="{{ url_for('auth.login') }}">Войти</a>
-        {% endif %}
-    </nav>
-</header>
+    <header>
+        <nav>
+            <a href="{{ url_for('index') }}" class="logo">🧪 TestingApp</a>
+            <div class="nav-links">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('quizzes.dashboard') }}">Головна</a>
+                    <a href="{{ url_for('quizzes.my_quizzes') }}">Мої тести</a>
+                    <a href="{{ url_for('quizzes.find_quiz') }}">Знайти тест</a>
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            {{ current_user.first_name[0] if current_user.first_name else 'U' }}
+                        </div>
+                        <div>
+                            <div style="font-weight: 600; color: #333;">
+                                {{ current_user.first_name or 'Користувач' }} {{ current_user.last_name or '' }}
+                            </div>
+                            <div style="font-size: 0.8rem; color: #666;">
+                                {{ current_user.auth_provider.title() }}
+                            </div>
+                        </div>
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-danger btn-sm">Вийти</a>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Увійти</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
 
-<main>
-    {% block content %}{% endblock %}
-</main>
+    <main>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script>
+        // Додаємо анімації для кнопок
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    // Створюємо ефект хвилі
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.classList.add('ripple');
+                    
+                    this.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+        });
+    </script>
+
+    <style>
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
 </body>
 </html>

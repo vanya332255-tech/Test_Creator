@@ -1,6 +1,40 @@
 {% extends "base.html" %}
-{% block title %}Главная{% endblock %}
+{% block title %}Головна - TestingApp{% endblock %}
 {% block content %}
-<h1 class="centered" >Добро пожаловать в TestingApp 🚀</h1>
-<p class="centered">Создавай и проходи тесты!</p>
+<div class="hero">
+    <h1>🚀 Ласкаво просимо до TestingApp!</h1>
+    <p>Створюй, проходь та ділися тестами з друзями</p>
+    
+    {% if not current_user.is_authenticated %}
+        <div class="mt-3">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Почати роботу</a>
+        </div>
+    {% else %}
+        <div class="mt-3">
+            <a href="{{ url_for('quizzes.dashboard') }}" class="btn btn-primary">Перейти до панелі</a>
+        </div>
+    {% endif %}
+</div>
+
+{% if current_user.is_authenticated %}
+<div class="dashboard">
+    <div class="card">
+        <h2>📝 Створити тест</h2>
+        <p>Створи новий тест з різними типами питань та поділися ним з друзями</p>
+        <a href="{{ url_for('quizzes.new_quiz') }}" class="btn btn-primary">Створити</a>
+    </div>
+    
+    <div class="card">
+        <h2>🔍 Знайти тест</h2>
+        <p>Введи код тесту та пройди його</p>
+        <a href="{{ url_for('quizzes.find_quiz') }}" class="btn btn-success">Знайти</a>
+    </div>
+    
+    <div class="card">
+        <h2>📊 Мої тести</h2>
+        <p>Переглядай, редагуй та аналізуй результати своїх тестів</p>
+        <a href="{{ url_for('quizzes.my_quizzes') }}" class="btn btn-primary">Переглянути</a>
+    </div>
+</div>
+{% endif %}
 {% endblock %}

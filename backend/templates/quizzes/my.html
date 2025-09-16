@@ -1,12 +1,41 @@
 {% extends "base.html" %}
-{% block title %}Мои тесты{% endblock %}
+{% block title %}Мої тести - TestingApp{% endblock %}
 {% block content %}
-<h2>Мои тесты</h2>
-<ul>
-{% for quiz in items %}
-    <li><a href="{{ url_for('quizzes.edit_quiz', quiz_id=quiz.id) }}">{{ quiz.title }}</a></li>
+<div class="hero">
+    <h1>📊 Мої тести</h1>
+    <p>Керуй своїми тестами та аналізуй результати</p>
+</div>
+
+{% if items %}
+    <div class="quiz-list">
+        {% for quiz in items %}
+            <div class="quiz-item">
+                <h3>{{ quiz.title }}</h3>
+                <p>Питання: {{ quiz.questions|length }} | 
+                   {% if quiz.is_published %}
+                       <span class="status-published">Опубліковано</span>
+                   {% else %}
+                       <span class="status-draft">Чернетка</span>
+                   {% endif %}
+                </p>
+                <div class="quiz-meta">
+                    <span>Створено: {{ quiz.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                    {% if quiz.is_published %}
+                        <span class="quiz-code">Код: {{ quiz.code }}</span>
+                    {% endif %}
+                </div>
+                <div class="d-flex gap-2 mt-3">
+                    <a href="{{ url_for('quizzes.edit_quiz', quiz_id=quiz.id) }}" class="btn btn-primary btn-sm">Редагувати</a>
+                    <a href="{{ url_for('quizzes.results', quiz_id=quiz.id) }}" class="btn btn-success btn-sm">Результати</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% else %}
-    <li>У вас пока нет тестов</li>
-{% endfor %}
-</ul>
+    <div class="empty-state">
+        <h3>У вас поки немає тестів</h3>
+        <p>Створіть свій перший тест та почніть ділитися знаннями</p>
+        <a href="{{ url_for('quizzes.new_quiz') }}" class="btn btn-primary">Створити тест</a>
+    </div>
+{% endif %}
 {% endblock %}
