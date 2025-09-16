@@ -1,0 +1,10 @@
+flask>=3.0
+flask-login
+flask-wtf
+email-validator
+sqlalchemy>=2.0
+flask-migrate
+python-dotenv
+Authlib
+python-telegram-bot>=21.0
+psycopg[binary]>=3.2
