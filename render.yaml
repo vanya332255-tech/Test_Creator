@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: testingapp
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python -m flask db upgrade
+    startCommand: gunicorn wsgi:app
+    envVars:
+      - key: FLASK_APP
+        value: src.run:app
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SQLALCHEMY_DATABASE_URI
+        fromDatabase:
+          name: testingapp-db
+          property: connectionString
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_BOT_NAME
+        sync: false
+      - key: GOOGLE_FORM_ID
+        sync: false
+      - key: GOOGLE_FORM_URL
+        sync: false
+
+databases:
+  - name: testingapp-db
+    plan: free

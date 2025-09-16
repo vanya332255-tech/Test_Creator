@@ -2,8 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
-# Virtual environment
 .venv/
 env/
 venv/
@@ -40,6 +38,7 @@ htmlcov/
 
 # IDE/Editor
 .idea/
+.idea
 .vscode/
 *.swp
 *.swo

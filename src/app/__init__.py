@@ -1,5 +1,6 @@
+import os
 from flask import Flask, render_template
-from .config import Config
+from .config import Config, ProductionConfig
 from .extensions import db, migrate, login_manager
 from .auth import auth_bp
 from .quizzes import quizzes_bp
@@ -9,7 +10,12 @@ from .auth.google import init_google
 
 def create_app():
     app = Flask(__name__, template_folder="../../templates", static_folder="../../static")
-    app.config.from_object(Config)
+    
+    # Choose configuration based on environment
+    if os.environ.get("FLASK_ENV") == "production":
+        app.config.from_object(ProductionConfig)
+    else:
+        app.config.from_object(Config)
 
     # init extensions
     db.init_app(app)
