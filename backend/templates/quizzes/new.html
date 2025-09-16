@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Новый тест{% endblock %}
+{% block content %}
+<h2>Создать тест</h2>
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.title.label }} {{ form.title(size=40) }}
+    <button type="submit">Создать</button>
+</form>
+{% endblock %}

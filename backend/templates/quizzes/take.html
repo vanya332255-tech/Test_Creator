@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Прохождение теста{% endblock %}
+{% block content %}
+<h2>{{ quiz.title }}</h2>
+<form method="post">
+{% for q in quiz.questions %}
+    <p><strong>{{ loop.index }}. {{ q.title }}</strong></p>
+    {% if q.qtype in ["single", "multi"] %}
+        {% for choice in q.choices %}
+            <label>
+                <input type="{% if q.qtype == 'single' %}radio{% else %}checkbox{% endif %}"
+                       name="q_{{ q.id }}"
+                       value="{{ choice.id }}">
+                {{ choice.text }}
+            </label><br>
+        {% endfor %}
+    {% else %}
+        <textarea name="q_{{ q.id }}"></textarea>
+    {% endif %}
+{% endfor %}
+    <button type="submit">Отправить</button>
+</form>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Редактирование теста{% endblock %}
+{% block content %}
+<h2>Редактирование теста: {{ quiz.title }}</h2>
+
+<form method="post">
+    <input type="hidden" name="action" value="toggle_publish">
+    <button type="submit">
+        {% if quiz.is_published %}Снять с публикации{% else %}Опубликовать{% endif %}
+    </button>
+</form>
+
+<h3>Вопросы</h3>
+<ul>
+{% for q in quiz.questions %}
+    <li>{{ q.title }} ({{ q.qtype }})</li>
+{% endfor %}
+</ul>
+
+<form method="post">
+    <input type="hidden" name="action" value="add_question">
+    <input type="text" name="q_title" placeholder="Текст вопроса">
+    <select name="q_type">
+        <option value="single">С 1 ответом</option>
+        <option value="multi">С несколькими ответами</option>
+        <option value="open">Открытый</option>
+    </select>
+    <button type="submit">Добавить</button>
+</form>
+{% endblock %}

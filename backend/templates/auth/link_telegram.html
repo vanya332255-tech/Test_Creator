@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Вход через Telegram{% endblock %}
+{% block content %}
+<h2>Подтверждение через Telegram</h2>
+<form method="post" action="{{ url_for('auth.telegram_send_code') }}">
+    <label>Телефон:</label>
+    <input type="text" name="phone" value="{{ phone or '' }}">
+    <button type="submit">Отправить код</button>
+</form>
+
+{% if wait_code %}
+<form method="post" action="{{ url_for('auth.telegram_verify') }}">
+    <label>Код:</label>
+    <input type="text" name="code">
+    <input type="hidden" name="phone" value="{{ phone }}">
+    <button type="submit">Подтвердить</button>
+</form>
+{% endif %}
+{% endblock %}

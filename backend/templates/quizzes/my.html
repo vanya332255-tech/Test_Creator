@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Мои тесты{% endblock %}
+{% block content %}
+<h2>Мои тесты</h2>
+<ul>
+{% for quiz in items %}
+    <li><a href="{{ url_for('quizzes.edit_quiz', quiz_id=quiz.id) }}">{{ quiz.title }}</a></li>
+{% else %}
+    <li>У вас пока нет тестов</li>
+{% endfor %}
+</ul>
+{% endblock %}

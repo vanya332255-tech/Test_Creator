@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}TestingApp{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+    <nav>
+        <a href="{{ url_for('index') }}">Главная</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('quizzes.dashboard') }}">Личный кабинет</a>
+            <a href="{{ url_for('auth.logout') }}">Выйти ({{ current_user.id }})</a>
+        {% else %}
+            <a href="{{ url_for('auth.login') }}">Войти</a>
+        {% endif %}
+    </nav>
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>

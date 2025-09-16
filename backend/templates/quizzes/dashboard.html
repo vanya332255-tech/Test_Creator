@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Личный кабинет{% endblock %}
+{% block content %}
+<h2>Личный кабинет</h2>
+<ul>
+    <li><a href="{{ url_for('quizzes.new_quiz') }}">Создать тест</a></li>
+    <li><a href="{{ url_for('quizzes.find_quiz') }}">Найти тест</a></li>
+    <li><a href="{{ url_for('quizzes.my_quizzes') }}">Мои тесты</a></li>
+</ul>
+{% endblock %}

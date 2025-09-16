@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Результаты{% endblock %}
+{% block content %}
+<h2>Результаты по тесту: {{ quiz.title }}</h2>
+<table border="1" cellpadding="5">
+    <tr><th>Пользователь</th><th>Баллы</th></tr>
+    {% for sub in subs %}
+        <tr>
+            <td>{{ sub.user_id }}</td>
+            <td>{{ sub.score }}/{{ sub.total }}</td>
+        </tr>
+    {% else %}
+        <tr><td colspan="2">Пока никто не прошёл</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}
