@@ -21,11 +21,13 @@ if __name__ == "__main__":
         db.create_all()
         print("✅ Database tables created!")
         
-        # Run migrations
+        # Run migrations (optional for SQLite)
         try:
-            migrate.upgrade()
+            from flask_migrate import upgrade
+            upgrade()
             print("✅ Migrations applied!")
         except Exception as e:
             print(f"⚠️ Migration warning: {e}")
+            print("Continuing with database creation...")
         
         print("🎉 Database initialization complete!")
