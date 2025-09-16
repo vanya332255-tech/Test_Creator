@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Верифікація реєстрації - TestingApp{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 2rem auto;">
+    <h2 class="text-center">🔐 Верифікація реєстрації</h2>
+    
+    <div class="alert alert-info" style="background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+        <strong>📋 Крок 1:</strong> Заповніть Google Form для отримання коду верифікації<br>
+        <strong>🔑 Крок 2:</strong> Введіть отриманий код нижче
+    </div>
+    
+    <div class="text-center" style="margin-bottom: 2rem;">
+        <a href="{{ config.GOOGLE_FORM_URL }}" target="_blank" class="btn btn-google" style="display: inline-block; margin-bottom: 1rem;">
+            📝 Заповнити Google Form
+        </a>
+        <p style="color: #666; font-size: 0.9rem;">
+            Після заповнення форми ви отримаєте код верифікації
+        </p>
+    </div>
+    
+    <form method="post">
+        <div class="form-group">
+            <label class="form-group label">Код верифікації</label>
+            <input 
+                type="text" 
+                name="verification_code" 
+                class="form-control" 
+                placeholder="Введіть код з Google Form"
+                required
+                minlength="6"
+            >
+            <small style="color: #666; font-size: 0.8rem;">
+                Код повинен містити принаймні 6 символів
+            </small>
+        </div>
+        
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">
+                ✅ Підтвердити реєстрацію
+            </button>
+        </div>
+    </form>
+    
+    <div class="text-center mt-3">
+        <p style="color: #666; font-size: 0.9rem;">
+            Немає коду? 
+            <a href="{{ url_for('auth.register') }}" style="color: #667eea; text-decoration: none;">
+                Повернутися до реєстрації
+            </a>
+        </p>
+    </div>
+    
+    <hr style="margin: 2rem 0;">
+    
+    <div class="text-center">
+        <p style="color: #666; margin-bottom: 1rem;">Або увійдіть через:</p>
+        <div class="btn-group" style="display: flex; gap: 0.5rem;">
+            <a href="{{ url_for('auth.google_login') }}" class="btn btn-google" style="flex: 1;">
+                🔗 Google
+            </a>
+            <a href="{{ url_for('auth.telegram_login') }}" class="btn btn-telegram" style="flex: 1;">
+                📱 Telegram
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -4,7 +4,25 @@
 <div class="card" style="max-width: 400px; margin: 2rem auto;">
     <h2 class="text-center">🔐 Вхід в систему</h2>
     
-    <!-- Форма входу -->
+    <!-- Рекомендовані способи входу -->
+    <div class="text-center" style="margin-bottom: 2rem;">
+        <p style="color: #666; margin-bottom: 1rem;">Рекомендовані способи входу:</p>
+        <div class="btn-group" style="display: flex; gap: 0.5rem; justify-content: center;">
+            <a href="{{ url_for('auth.google_login') }}" class="btn btn-google" style="flex: 1;">
+                🔗 Google
+            </a>
+            <a href="{{ url_for('auth.telegram_login') }}" class="btn btn-telegram" style="flex: 1;">
+                📱 Telegram
+            </a>
+        </div>
+    </div>
+    
+    <hr style="margin: 2rem 0;">
+    
+    <!-- Форма входу (тільки для адміністраторів) -->
+    <div style="text-align: center; margin-bottom: 1rem;">
+        <small style="color: #666;">Або увійдіть як адміністратор:</small>
+    </div>
     <form method="post">
         {{ form.hidden_tag() }}
         
@@ -48,24 +66,9 @@
         <p style="color: #666; font-size: 0.9rem;">
             Немає акаунту? 
             <a href="{{ url_for('auth.register') }}" style="color: #667eea; text-decoration: none;">
-                Зареєструватися
+                Зареєструватися (з верифікацією)
             </a>
         </p>
-    </div>
-    
-    <hr style="margin: 2rem 0;">
-    
-    <!-- Альтернативні способи входу -->
-    <div class="text-center">
-        <p style="color: #666; margin-bottom: 1rem;">Або увійдіть через:</p>
-        <div class="btn-group">
-            <a href="{{ url_for('auth.google_login') }}" class="btn btn-google">
-                🔗 Google
-            </a>
-            <a href="{{ url_for('auth.telegram_login') }}" class="btn btn-telegram">
-                📱 Telegram
-            </a>
-        </div>
     </div>
 </div>
 {% endblock %}

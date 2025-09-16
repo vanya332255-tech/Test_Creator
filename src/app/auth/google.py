@@ -25,10 +25,14 @@ def handle_google_callback(db, User, login_user):
     userinfo = token.get('userinfo')
     if not userinfo:
         userinfo = oauth.google.parse_id_token(token)
-        sub = userinfo['sub']
+    
+    sub = userinfo.get('sub')
     email = userinfo.get('email')
     first = userinfo.get('given_name')
     last = userinfo.get('family_name')
+
+    if not sub or not email:
+        return redirect(url_for('auth.login'))
 
     user = db.session.execute(db.select(User).filter_by(google_sub=sub)).scalar_one_or_none()
     if not user and email:

@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, request, flash, current_app
+from flask import render_template, redirect, url_for, request, flash, current_app, session
 from flask_login import login_user, logout_user, login_required, current_user
 from . import auth_bp
 from ..extensions import db
@@ -37,27 +37,69 @@ def login():
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
-    """Сторінка реєстрації"""
+    """Сторінка реєстрації з верифікацією через Google Forms"""
     if current_user.is_authenticated:
         return redirect(url_for('quizzes.dashboard'))
     
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(
-            username=form.username.data,
-            email=form.email.data,
-            first_name=form.first_name.data,
-            last_name=form.last_name.data,
-            auth_provider='local'
-        )
-        user.set_password(form.password.data)
-        db.session.add(user)
-        db.session.commit()
+        # Зберігаємо дані реєстрації в сесії для верифікації
+        session['pending_registration'] = {
+            'username': form.username.data,
+            'email': form.email.data,
+            'first_name': form.first_name.data,
+            'last_name': form.last_name.data,
+            'password': form.password.data
+        }
         
-        flash('Реєстрація успішна! Тепер ви можете увійти в систему.', 'success')
-        return redirect(url_for('auth.login'))
+        flash('Будь ласка, заповніть Google Form для підтвердження реєстрації.', 'info')
+        return redirect(url_for('auth.verify_registration'))
     
     return render_template("auth/register.html", form=form)
+
+
+@auth_bp.route("/verify-registration", methods=["GET", "POST"])
+def verify_registration():
+    """Верифікація реєстрації через Google Forms"""
+    if current_user.is_authenticated:
+        return redirect(url_for('quizzes.dashboard'))
+    
+    # Перевіряємо, чи є дані реєстрації в сесії
+    if 'pending_registration' not in session:
+        flash('Немає даних для верифікації. Будь ласка, спочатку зареєструйтеся.', 'error')
+        return redirect(url_for('auth.register'))
+    
+    if request.method == 'POST':
+        verification_code = request.form.get('verification_code', '').strip()
+        
+        if verification_code:
+            # Тут можна додати логіку перевірки коду з Google Forms
+            # Поки що приймаємо будь-який код для демонстрації
+            if len(verification_code) >= 6:  # Мінімальна довжина коду
+                # Створюємо користувача
+                user_data = session['pending_registration']
+                user = User(
+                    username=user_data['username'],
+                    email=user_data['email'],
+                    first_name=user_data['first_name'],
+                    last_name=user_data['last_name'],
+                    auth_provider='local'
+                )
+                user.set_password(user_data['password'])
+                db.session.add(user)
+                db.session.commit()
+                
+                # Очищаємо сесію
+                session.pop('pending_registration', None)
+                
+                flash('Реєстрація успішна! Тепер ви можете увійти в систему.', 'success')
+                return redirect(url_for('auth.login'))
+            else:
+                flash('Код верифікації повинен містити принаймні 6 символів.', 'error')
+        else:
+            flash('Будь ласка, введіть код верифікації.', 'error')
+    
+    return render_template("auth/verify_registration.html")
 
 
 @auth_bp.route("/logout")
@@ -77,7 +119,12 @@ def google_login():
 
 @auth_bp.route("/google/callback")
 def google_callback():
-    return handle_google_callback(db, User, login_user)
+    try:
+        return handle_google_callback(db, User, login_user)
+    except Exception as e:
+        current_app.logger.error(f"Google OAuth error: {e}")
+        flash('Помилка авторизації через Google. Спробуйте ще раз.', 'error')
+        return redirect(url_for('auth.login'))
 
 
 # ======== Telegram Auth ========
