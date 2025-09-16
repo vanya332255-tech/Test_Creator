@@ -3,7 +3,7 @@ services:
     name: testingapp
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt && python -m flask db upgrade
+    buildCommand: pip install -r requirements.txt && python init_db.py
     startCommand: gunicorn wsgi:app
     envVars:
       - key: FLASK_APP
