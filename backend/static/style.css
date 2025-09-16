@@ -1,8 +1,10 @@
 /* backend/static/style.css */
 
+
+
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
+    background-color: pink;
     margin: 0;
     padding: 0;
 }
@@ -30,3 +32,109 @@ nav a {
     border: 1px solid #ffeeba;
     border-radius: 5px;
 }
+
+.centered {
+    text-align: center;
+}
+
+.beautiful-page {
+    background-color: deeppink;
+    color: white;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px 25px;
+    margin: 20px auto;
+    max-width: 500px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #007bff;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+button.btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+button.btn:hover {
+    background: #0056b3;
+}
+
+button.btn-success {
+    background: #28a745;
+}
+
+button.btn-success:hover {
+    background: #1e7e34;
+}
+
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+    margin-top: 20px;
+}
+
+a.btn {
+    display: inline-block;
+    padding: 12px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    width: 250px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+a.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-google {
+    background: #db4437;
+    color: white;
+}
+
+.btn-google:hover {
+    background: #c1351d;
+}
+
+.btn-telegram {
+    background: #0088cc;
+    color: white;
+}
+
+.btn-telegram:hover {
+    background: #0077b5;
+}
+
