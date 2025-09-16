@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% block title %}Вход{% endblock %}
+
 {% block content %}
-<h2>Вход</h2>
-<p><a href="{{ url_for('auth.google_login') }}">Войти через Google</a></p>
-<p><a href="{{ url_for('auth.telegram_login') }}">Войти через Telegram</a></p>
+<div class="card centered">
+    <h2>Вход</h2>
+    <div class="btn-group">
+        <a href="{{ url_for('auth.google_login') }}" class="btn btn-google">Войти через Google</a>
+        <a href="{{ url_for('auth.telegram_login') }}" class="btn btn-telegram">Войти через Telegram</a>
+    </div>
+</div>
 {% endblock %}

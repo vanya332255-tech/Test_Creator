@@ -1,19 +1,29 @@
 {% extends "base.html" %}
-{% block title %}Вход через Telegram{% endblock %}
-{% block content %}
-<h2>Подтверждение через Telegram</h2>
-<form method="post" action="{{ url_for('auth.telegram_send_code') }}">
-    <label>Телефон:</label>
-    <input type="text" name="phone" value="{{ phone or '' }}">
-    <button type="submit">Отправить код</button>
-</form>
 
-{% if wait_code %}
-<form method="post" action="{{ url_for('auth.telegram_verify') }}">
-    <label>Код:</label>
-    <input type="text" name="code">
-    <input type="hidden" name="phone" value="{{ phone }}">
-    <button type="submit">Подтвердить</button>
-</form>
-{% endif %}
+{% block title %}Привязка Telegram{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Привязка Telegram-аккаунта</h2>
+    <p>
+        Чтобы привязать аккаунт к Telegram, сначала <b>запустите бота</b> и нажмите кнопку <b>«Поделиться номером»</b>.
+        После этого мы сможем отправить вам код для подтверждения.
+    </p>
+
+    <form method="post" action="{{ url_for('auth.telegram_send_code') }}">
+        <label for="phone">Ваш номер телефона (в формате +380...):</label>
+        <input type="text" id="phone" name="phone" value="{{ phone or '' }}" placeholder="+380123456789" required>
+        <button type="submit" class="btn">Получить код</button>
+    </form>
+
+    {% if wait_code %}
+    <hr>
+    <form method="post" action="{{ url_for('auth.telegram_verify') }}">
+        <label for="code">Введите код из Telegram:</label>
+        <input type="text" id="code" name="code" placeholder="123456" required>
+        <input type="hidden" name="phone" value="{{ phone }}">
+        <button type="submit" class="btn btn-success">Подтвердить</button>
+    </form>
+    {% endif %}
+</div>
 {% endblock %}
