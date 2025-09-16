@@ -1,0 +1,32 @@
+/* backend/static/style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+}
+
+nav a {
+    color: white;
+    margin: 0 10px;
+    text-decoration: none;
+}
+
+.container {
+    padding: 20px;
+}
+
+.flash {
+    background: #ffeeba;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ffeeba;
+    border-radius: 5px;
+}

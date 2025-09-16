@@ -7,11 +7,11 @@ from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 
-# Простое in-memory хранилище для кода подтверждения
+# --- Простое in-memory хранилище кодов ---
 class CodesStore:
     def __init__(self):
-        self._map = {}      # phone -> telegram_user_id
-        self._codes = {}    # phone -> (code, expires_ts)
+        self._map = {}  # phone -> telegram_user_id
+        self._codes = {}  # phone -> (code, expires_ts)
 
     def save_mapping(self, phone: str, user_id: int):
         self._map[phone] = user_id
@@ -40,10 +40,8 @@ class CodesStore:
 codes = CodesStore()
 
 
-# ==== Telegram handlers ====
-
+# --- Handlers для бота ---
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Обработка /start"""
     kb = [[KeyboardButton("Поделиться номером", request_contact=True)]]
     await update.message.reply_text(
         "Привет! Нажми кнопку ниже, чтобы поделиться телефоном и связать аккаунт.",
@@ -52,42 +50,52 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def got_contact(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Сохраняем телефон и user_id"""
     contact = update.effective_message.contact
     phone = contact.phone_number
     user_id = update.effective_user.id
     codes.save_mapping(phone, user_id)
-    await update.message.reply_text("Спасибо! Телефон привязан, можешь вернуться на сайт.")
+    await update.message.reply_text("Спасибо! Телефон привязан, теперь можно вернуться на сайт.")
 
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """На случай произвольных сообщений"""
     await update.message.reply_text("Напиши /start и поделись номером, чтобы привязать телефон.")
 
 
+# --- Отправка кода ---
 async def send_code(phone: str, code: str) -> bool:
-    """Отправить код в Telegram"""
-    app = current_app.telegram_app
+    app = current_app
+    tg_app = getattr(app, "telegram_app", None)
+    if not tg_app:
+        app.logger.error("❌ Telegram bot не инициализирован")
+        return False
+
     user_id = codes.get_user_id(phone)
     if not user_id:
         return False
-    await app.bot.send_message(chat_id=user_id, text=f"Ваш код подтверждения: {code}")
+
+    await tg_app.bot.send_message(chat_id=user_id, text=f"Ваш код подтверждения: {code}")
     return True
 
 
-# ==== Инициализация бота ====
-
+# --- Инициализация бота ---
 def init_telegram(app):
     token = app.config.get("TELEGRAM_BOT_TOKEN")
     if not token:
+        app.logger.warning("⚠️ TELEGRAM_BOT_TOKEN не задан — бот не запущен")
         return
 
     tg_app = Application.builder().token(token).build()
+
     tg_app.add_handler(CommandHandler("start", start))
     tg_app.add_handler(MessageHandler(filters.CONTACT, got_contact))
     tg_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, echo))
 
+    # сохраняем бота в Flask
     app.telegram_app = tg_app
 
-    # запуск в отдельном потоке, чтобы не блокировал Flask
-    threading.Thread(target=lambda: asyncio.run(tg_app.run_polling()), daemon=True).start()
+    # запускаем polling в отдельном потоке
+    def _run():
+        asyncio.run(tg_app.run_polling())
+
+    threading.Thread(target=_run, daemon=True).start()
+    app.logger.info("✅ Telegram bot запущен")
